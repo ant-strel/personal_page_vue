@@ -1,9 +1,11 @@
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import { ref, defineProps } from 'vue'
 
-defineProps({
-  msg: String,
-})
+interface Props {
+  msg: string
+}
+
+const props = defineProps<Props>()
 
 const count = ref(0)
 </script>
