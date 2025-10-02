@@ -7,10 +7,8 @@
     <section class="featured">
         <h2>Последние записи в блоге</h2>
       <div class="posts-preview">
-        <!-- Здесь будут карточки записей блога -->
         <p>Записи блога будут добавлены позже</p>
       </div>
     </section>
-
   </div>
 </template>
