@@ -1,8 +1,8 @@
-/* Стили хедера */
+/* Header styles */
 .header {
   padding: 1.5rem 0;
   border-bottom: 1px solid #eaeaea;
-  background-color: #f2f2f2;
+  background-color: #ffffff;
 }
 
 .header .app-container {
@@ -17,27 +17,29 @@
 
 .logo a {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
-  color: #121212;
+  color: #222222;
 }
 
 .nav {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .nav a {
-  color: #555;
+  color: #666666;
   text-decoration: none;
   transition: color 0.2s;
+  font-size: 0.95rem;
 }
 
 .nav a:hover {
-  color: #121212;
+  color: #222222;
 }
 
 .nav a.router-link-active {
-  color: #121212;
+  color: #222222;
   font-weight: 500;
+  border-bottom: 1px solid #222222;
 }

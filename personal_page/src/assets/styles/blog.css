@@ -1,0 +1,35 @@
+/* Blog page specific styles */
+.blog-post {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.blog-post:last-child {
+  border-bottom: none;
+}
+
+.post-title {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-meta {
+  color: #666666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.post-content {
+  line-height: 1.7;
+}
+
+.blog-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.pagination-button {
+  margin: 0 0.5rem;
+}

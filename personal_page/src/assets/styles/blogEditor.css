@@ -1,0 +1,138 @@
+/* Blog Editor Layout */
+.blog-editor {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.editor-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  height: calc(100vh - 150px);
+}
+
+/* Posts List Section */
+.posts-list {
+  border-right: 1px solid #eaeaea;
+  padding-right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.posts-list h2 {
+  margin-bottom: 1rem;
+}
+
+.posts-container {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.post-item {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #eaeaea;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.post-item:hover {
+  background-color: #f9f9f9;
+}
+
+.post-item.selected {
+  border-color: #999999;
+  background-color: #f9f9f9;
+}
+
+.post-item h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.post-date {
+  color: #666666;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Post Editor Section */
+.post-editor {
+  padding: 0 1rem;
+  overflow-y: auto;
+}
+
+.post-editor h2 {
+  margin-bottom: 1.5rem;
+}
+
+.no-post-selected {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666666;
+  font-style: italic;
+}
+
+/* Form specific styles */
+.editor-textarea {
+  min-height: 300px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+/* Button variants - use common styles from base.css */
+.btn-create {
+  margin-bottom: 1rem;
+}
+
+.btn-logout {
+  color: #666666;
+}
+
+.btn-save {
+  background-color: #f5f5f5;
+}
+
+.btn-delete {
+  padding: 0.25rem 0.5rem;
+  color: #666666;
+  border: none;
+  background: transparent;
+  font-size: 0.8125rem;
+}
+
+.btn-delete:hover {
+  color: #e74c3c;
+  text-decoration: underline;
+  background-color: transparent;
+}
+
+@media (max-width: 768px) {
+    .editor-container {
+        grid-template-columns: 1fr;
+    }
+}

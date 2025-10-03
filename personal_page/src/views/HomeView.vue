@@ -2,12 +2,12 @@
   <div class="home">
     <section class="hero">
           <h1 class="title">Welcome to My Personal Page</h1>
-          <p class="subtitle">A simple Vue.js application</p>
+          <p class="subtitle">A minimalistic Vue.js portfolio and blog</p>
     </section>
     <section class="featured">
-        <h2>Последние записи в блоге</h2>
+        <h2>Latest Blog Posts</h2>
       <div class="posts-preview">
-        <p>Записи блога будут добавлены позже</p>
+        <p>Blog posts will be added soon</p>
       </div>
     </section>
   </div>

@@ -1,0 +1,18 @@
+/* Home page specific styles */
+.home .hero {
+  margin: 4rem 0;
+}
+
+.featured {
+  margin: 3rem 0;
+}
+
+.featured h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.posts-preview {
+  border-top: 1px solid #eaeaea;
+  padding-top: 1.5rem;
+}

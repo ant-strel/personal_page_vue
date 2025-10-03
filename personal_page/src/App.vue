@@ -8,12 +8,12 @@ import { RouterView,RouterLink} from 'vue-router'
    <header class="header">
       <div class="app-container">
         <div class="logo">
-            <RouterLink to="/">Ваше Имя</RouterLink>
+            <RouterLink to="/">Your Name</RouterLink>
         </div>
         <nav class="nav">
-          <RouterLink to="/">Home</RouterLink> |
-          <RouterLink to="/blog">Blog</RouterLink>|
-          <RouterLink to="/contact">Contact</RouterLink>          
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/blog">Blog</RouterLink>
+          <RouterLink to="/contact">Contact</RouterLink>
         </nav>
       </div>
    </header>
@@ -26,7 +26,7 @@ import { RouterView,RouterLink} from 'vue-router'
     <!--footer -->
     <footer class="footer">
       <div class="container">
-        <p>&copy; 2025 MyName</p>
+        <p>&copy; 2025 Your Name. All rights reserved.</p>
       </div>
     </footer>
   </div>

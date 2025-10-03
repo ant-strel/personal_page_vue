@@ -1,0 +1,23 @@
+.admin-login-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 3px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Form styles already defined in base.css */
+
+.error-message {
+    color: #e74c3c;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}

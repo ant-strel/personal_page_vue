@@ -1,0 +1,30 @@
+/* Contact page specific styles */
+.contact-form {
+  max-width: 600px;
+  margin: 3rem auto;
+}
+
+.contact-info {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eaeaea;
+}
+
+.contact-info h3 {
+  margin-bottom: 1rem;
+}
+
+.contact-method {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.contact-method-label {
+  width: 100px;
+  font-weight: 500;
+}
+
+.submit-wrapper {
+  margin-top: 1.5rem;
+}

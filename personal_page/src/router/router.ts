@@ -14,9 +14,33 @@ export const router = createRouter({
             component: () => import('../views/BlogView.vue')
         },
         {
-            path: '/about',
-            name: 'about',
-            component: () => import('../views/AboutView.vue')
+            path: '/contact',
+            name: 'contact',
+            component: () => import('../views/ContactView.vue')
+        },
+        {
+            path:'/admin',
+            name:'admin',
+            component: () => import('../views/AdminView.vue')
+        },
+        {
+            path: '/admin/blog-editor',
+            name: 'blog-editor',
+            component: () => import('../views/BlogEditorView.vue')
         }
     ]
+});
+
+// Add navigation guard to check authentication
+router.beforeEach((to, from, next) => {
+    if (to.meta.requiresAuth) {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            next('/admin');
+        } else {
+            next();
+        }
+    } else {
+        next();
+    }
 });
