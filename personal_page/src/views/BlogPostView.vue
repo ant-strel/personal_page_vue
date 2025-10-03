@@ -1,27 +1,35 @@
 <template>
   <div class="blog-post-view">
     <section v-if="isLoading" class="loading-container">
-      <p>Loading post...</p>
+      <p>{{ t('blogPost.loading') }}</p>
     </section>
     
     <section v-else-if="error" class="error-container">
-      <h2>Error</h2>
+      <h2>{{ t('blogPost.error') }}</h2>
       <p>{{ error }}</p>
-      <router-link to="/blog" class="btn btn-outline">Back to Blog</router-link>
+      <router-link to="/blog" class="btn btn-outline">{{ t('blogPost.backToBlog') }}</router-link>
     </section>
     
     <section v-else-if="!post" class="not-found-container">
-      <h2>Post Not Found</h2>
-      <p>The blog post you're looking for doesn't exist or has been removed.</p>
-      <router-link to="/blog" class="btn btn-outline">Back to Blog</router-link>
+      <h2>{{ t('blogPost.notFound') }}</h2>
+      <p>{{ t('blogPost.notFoundMessage') }}</p>
+      <router-link to="/blog" class="btn btn-outline">{{ t('blogPost.backToBlog') }}</router-link>
     </section>
     
     <article v-else class="blog-post-full">
+      <div class="language-selector">
+        <label for="language-select">{{ t('language') }}:</label>
+        <select id="language-select" v-model="selectedLanguage" @change="changeLanguage">
+          <option :value="Language.EN">{{ t('language.en') }}</option>
+          <option :value="Language.RU">{{ t('language.ru') }}</option>
+        </select>
+      </div>
+      
       <header class="post-header">
-        <h1 class="post-title">{{ post.title }}</h1>
+        <h1 class="post-title">{{ getLocalizedField(post.title) }}</h1>
         <div class="post-meta">
           <span class="post-date">{{ formatDate(post.createdAt) }}</span>
-          <span v-if="post.author" class="post-author">· By {{ post.author }}</span>
+          <span v-if="post.author" class="post-author">· {{ t('blogPost.by') }} {{ post.author }}</span>
         </div>
         
         <div v-if="post.tags && post.tags.length" class="post-tags">
@@ -30,25 +38,33 @@
       </header>
       
       <div class="post-content">
-        <div v-html="renderMarkdown(post.content)"></div>
+        <div v-html="renderMarkdown(getLocalizedField(post.content))"></div>
       </div>
       
       <footer class="post-footer">
-        <router-link to="/blog" class="btn btn-text">← Back to all posts</router-link>
+        <router-link to="/blog" class="btn btn-text">{{ t('blogPost.backToBlog') }}</router-link>
       </footer>
     </article>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useBlog } from '../composables/useBlog';
+import { useI18n, Language } from '../composables/useI18n';
 import { BlogServiceType } from '../services/blog';
+import { LocalizedContent } from '../services/blog/types';
+
+// Использование i18n
+const { t, currentLanguage, setLanguage } = useI18n();
+const selectedLanguage = ref(currentLanguage.value);
 
 // Markdown renderer (for simplicity, we'll use a basic implementation)
 // In a real app, you might want to use a library like 'marked' or 'markdown-it'
 function renderMarkdown(content: string): string {
+  if (!content) return '';
+  
   // For now, we'll just wrap paragraphs in <p> tags
   // In a real application, you would use a proper markdown parser
   return content
@@ -67,8 +83,33 @@ const { currentPost, isLoading, error, fetchPost } = useBlog(BlogServiceType.MOC
 // For easier template access
 const post = computed(() => currentPost.value);
 
-// Load the post on component mount
+// Смена языка
+const changeLanguage = () => {
+  setLanguage(selectedLanguage.value);
+};
+
+// Получение локализованного значения поля
+const getLocalizedField = (field: string | LocalizedContent | undefined): string => {
+  if (!field) return '';
+  
+  if (typeof field === 'string') {
+    return field;
+  }
+  
+  // Возвращаем значение для текущего языка или первое доступное значение
+  return field[currentLanguage.value] || 
+         field[Object.keys(field)[0] as Language] || 
+         '';
+};
+
+// Load the post on component mount or when language changes
 onMounted(async () => {
+  if (slug) {
+    await fetchPost(slug);
+  }
+});
+
+watch(currentLanguage, async () => {
   if (slug) {
     await fetchPost(slug);
   }
@@ -76,7 +117,9 @@ onMounted(async () => {
 
 // Format date
 const formatDate = (date: Date | string) => {
-  return new Date(date).toLocaleDateString('en-US', {
+  const locale = currentLanguage.value === Language.RU ? 'ru-RU' : 'en-US';
+  
+  return new Date(date).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric'

@@ -1,37 +1,45 @@
 <template>
     <div class="blog">
         <section class="hero">
-            <h1 class="title">Blog</h1>
-            <p class="subtitle">Thoughts, ideas, and updates</p>
+            <h1 class="title">{{ t('blog.title') }}</h1>
+            <p class="subtitle">{{ t('blog.subtitle') }}</p>
         </section>
         
+        <div class="language-selector">
+            <label for="language-select">{{ t('language') }}:</label>
+            <select id="language-select" v-model="selectedLanguage" @change="changeLanguage">
+                <option :value="Language.EN">{{ t('language.en') }}</option>
+                <option :value="Language.RU">{{ t('language.ru') }}</option>
+            </select>
+        </div>
+        
         <div v-if="isLoading" class="loading-posts">
-            <p>Loading posts...</p>
+            <p>{{ t('blog.loading') }}</p>
         </div>
         
         <div v-else-if="!posts.length" class="no-posts">
-            <p>No posts available at the moment. Check back soon!</p>
+            <p>{{ t('blog.noPosts') }}</p>
         </div>
         
         <template v-else>
             <article v-for="post in posts" :key="post.id" class="blog-post">
                 <h2 class="post-title">
-                    <router-link :to="'/blog/' + post.slug">{{ post.title }}</router-link>
+                    <router-link :to="'/blog/' + post.slug">{{ getLocalizedField(post.title) }}</router-link>
                 </h2>
                 <div class="post-meta">
                     {{ formatDate(post.createdAt) }} 
                     <span v-if="post.tags && post.tags.length" class="post-tags">
-                        · Tags: 
+                        · {{ t('blog.tags') }} 
                         <span v-for="(tag, index) in post.tags" :key="tag" class="tag">
                             {{ tag }}{{ index < post.tags.length - 1 ? ', ' : '' }}
                         </span>
                     </span>
                 </div>
                 <div class="post-content">
-                    <p>{{ post.excerpt || truncateContent(post.content) }}</p>
+                    <p>{{ getLocalizedField(post.excerpt) || truncateContent(getLocalizedField(post.content)) }}</p>
                 </div>
                 <div class="post-footer">
-                    <router-link :to="'/blog/' + post.slug" class="btn btn-text">Continue reading →</router-link>
+                    <router-link :to="'/blog/' + post.slug" class="btn btn-text">{{ t('blog.continueReading') }}</router-link>
                 </div>
             </article>
             
@@ -41,7 +49,7 @@
                     class="btn btn-outline pagination-button"
                     :disabled="pagination.page <= 1"
                 >
-                    Previous
+                    {{ t('blog.previous') }}
                 </button>
                 <span class="pagination-info">{{ pagination.page }} / {{ pagination.totalPages }}</span>
                 <button 
@@ -49,7 +57,7 @@
                     class="btn btn-outline pagination-button"
                     :disabled="!pagination.hasMore"
                 >
-                    Next
+                    {{ t('blog.next') }}
                 </button>
             </div>
         </template>
@@ -57,29 +65,44 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { useBlog } from '../composables/useBlog';
+import { useI18n, Language } from '../composables/useI18n';
 import { BlogServiceType } from '../services/blog';
+import { LocalizedContent } from '../services/blog/types';
 
-// Использование сервиса блога
+// Использование сервисов
 const { posts, pagination, isLoading, fetchPosts } = useBlog(BlogServiceType.MOCK);
+const { t, currentLanguage, setLanguage } = useI18n();
 
-// Текущая страница
+// Локальное состояние
 const currentPage = ref(1);
+const selectedLanguage = ref<Language>(currentLanguage.value);
 
 // Загрузка постов при монтировании компонента
 onMounted(async () => {
     await loadPosts(1);
 });
 
-// Загрузка постов для указанной страницы
+// Следим за изменением языка для перезагрузки постов
+watch(currentLanguage, async () => {
+    await loadPosts(currentPage.value);
+}, { immediate: true });
+
+// Загрузка постов для указанной страницы с учетом выбранного языка
 const loadPosts = async (page: number) => {
     currentPage.value = page;
     await fetchPosts({
         page,
         limit: 5,
-        published: true // Показываем только опубликованные посты
+        published: true, // Показываем только опубликованные посты
+        language: currentLanguage.value // Фильтруем по текущему языку
     });
+};
+
+// Смена языка
+const changeLanguage = () => {
+    setLanguage(selectedLanguage.value);
 };
 
 // Навигация по страницам
@@ -95,9 +118,25 @@ const prevPage = () => {
     }
 };
 
-// Форматирование даты
+// Получение локализованного значения поля
+const getLocalizedField = (field: string | LocalizedContent | undefined): string => {
+    if (!field) return '';
+    
+    if (typeof field === 'string') {
+        return field;
+    }
+    
+    // Возвращаем значение для текущего языка или первое доступное значение
+    return field[currentLanguage.value] || 
+           field[Object.keys(field)[0] as Language] || 
+           '';
+};
+
+// Форматирование даты в соответствии с текущим языком
 const formatDate = (date: Date | string) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    const locale = currentLanguage.value === Language.RU ? 'ru-RU' : 'en-US';
+    
+    return new Date(date).toLocaleDateString(locale, {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -106,6 +145,8 @@ const formatDate = (date: Date | string) => {
 
 // Сокращение контента для отображения
 const truncateContent = (content: string, maxLength: number = 200) => {
+    if (!content) return '';
+    
     if (content.length <= maxLength) {
         return content;
     }

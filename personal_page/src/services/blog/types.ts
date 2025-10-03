@@ -3,14 +3,29 @@
  */
 
 /**
- * Модель статьи блога
+ * Языки, поддерживаемые для статей блога
+ */
+import { Language } from '../../composables/useI18n';
+
+/**
+ * Интерфейс для многоязычного контента
+ */
+export interface LocalizedContent {
+  [Language.RU]?: string;
+  [Language.EN]?: string;
+}
+
+/**
+ * Модель статьи блога с поддержкой локализации
  */
 export interface BlogPost {
   id: string;
-  title: string;
+  // Многоязычные поля
+  title: string | LocalizedContent;
+  content: string | LocalizedContent;
+  excerpt?: string | LocalizedContent;
+  // Общие поля
   slug?: string;
-  content: string;
-  excerpt?: string;
   author?: string;
   authorId?: string;
   createdAt: Date;
@@ -18,30 +33,33 @@ export interface BlogPost {
   publishedAt?: Date;
   published: boolean;
   tags?: string[];
+  language?: Language; // Основной язык статьи
 }
 
 /**
  * Данные для создания новой статьи
  */
 export interface CreatePostData {
-  title: string;
-  content: string;
+  title: string | LocalizedContent;
+  content: string | LocalizedContent;
   slug?: string;
-  excerpt?: string;
+  excerpt?: string | LocalizedContent;
   published?: boolean;
   tags?: string[];
+  language?: Language; // Основной язык статьи
 }
 
 /**
  * Данные для обновления существующей статьи
  */
 export interface UpdatePostData {
-  title?: string;
-  content?: string;
+  title?: string | LocalizedContent;
+  content?: string | LocalizedContent;
   slug?: string;
-  excerpt?: string;
+  excerpt?: string | LocalizedContent;
   published?: boolean;
   tags?: string[];
+  language?: Language; // Основной язык статьи
 }
 
 /**
@@ -54,6 +72,7 @@ export interface GetPostsParams {
   search?: string;
   authorId?: string;
   published?: boolean;
+  language?: Language; // Фильтр по языку
 }
 
 /**

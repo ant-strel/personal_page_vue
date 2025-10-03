@@ -27,11 +27,15 @@
                             class="post-item"
                             :class="{ 'selected': selectedPost?.id === post.id }"
                         >
-                            <h3>{{ post.title }}</h3>
-                            <p class="post-date">{{ formatDate(post.createdAt) }}</p>
-                            <span v-if="!post.published" class="draft-badge">Draft</span>
+                            <h3>{{ getLocalizedTitle(post) }}</h3>
+                            <p class="post-date">
+                                {{ formatDate(post.createdAt) }}
+                                <span v-if="post.language" class="language-badge">{{ post.language }}</span>
+                                <span v-else class="language-badge multi">{{ t('blogEditor.multilingual') }}</span>
+                            </p>
+                            <span v-if="!post.published" class="draft-badge">{{ t('blogEditor.draft') }}</span>
                             <div class="post-actions">
-                                <button @click.stop="deletePost(post.id)" class="btn-delete">Delete</button>
+                                <button @click.stop="deletePost(post.id)" class="btn-delete">{{ t('blogEditor.delete') }}</button>
                             </div>
                         </div>
                     </div>
@@ -45,19 +49,110 @@
                     <template v-else-if="isNewPost || selectedPost">
                         <h2>{{ isNewPost ? 'Create New Post' : 'Edit Post' }}</h2>
                         
+                        <!-- Выбор языка для статьи -->
                         <div class="form-group">
-                            <label for="post-title">Title</label>
-                            <input 
-                                type="text" 
-                                id="post-title" 
-                                v-model="postForm.title"
-                                class="form-control" 
-                                placeholder="Enter post title"
-                            />
+                            <label for="post-language">{{ t('blogEditor.language') }}</label>
+                            <select 
+                                id="post-language" 
+                                v-model="postForm.language" 
+                                class="form-control"
+                            >
+                                <option :value="undefined">{{ t('blogEditor.multilingual') }}</option>
+                                <option v-for="lang in availableLanguages" :key="lang" :value="lang">
+                                    {{ lang === Language.EN ? 'English' : 'Русский' }}
+                                </option>
+                            </select>
                         </div>
                         
+                        <!-- Одноязычная форма (когда выбран конкретный язык) -->
+                        <template v-if="postForm.language">
+                            <div class="form-group">
+                                <label for="post-title">{{ t('blogEditor.fieldTitle') }}</label>
+                                <input 
+                                    type="text" 
+                                    id="post-title" 
+                                    v-model="singleLanguageForm.title"
+                                    class="form-control" 
+                                    :placeholder="t('blogEditor.titlePlaceholder')"
+                                />
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="post-excerpt">{{ t('blogEditor.fieldExcerpt') }}</label>
+                                <textarea 
+                                    id="post-excerpt" 
+                                    v-model="singleLanguageForm.excerpt"
+                                    class="form-control" 
+                                    rows="3"
+                                    :placeholder="t('blogEditor.excerptPlaceholder')"
+                                ></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="post-content">{{ t('blogEditor.fieldContent') }}</label>
+                                <textarea 
+                                    id="post-content" 
+                                    v-model="singleLanguageForm.content"
+                                    class="form-control editor-textarea" 
+                                    rows="15"
+                                    :placeholder="t('blogEditor.contentPlaceholder')"
+                                ></textarea>
+                            </div>
+                        </template>
+                        
+                        <!-- Многоязычная форма (когда язык не выбран) -->
+                        <template v-else>
+                            <div class="language-tabs">
+                                <div 
+                                    v-for="lang in availableLanguages" 
+                                    :key="lang" 
+                                    @click="activeLanguageTab = lang"
+                                    class="lang-tab"
+                                    :class="{ active: activeLanguageTab === lang }"
+                                >
+                                    {{ lang === Language.EN ? 'English' : 'Русский' }}
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content">
+                                <div class="form-group">
+                                    <label for="post-title">{{ t('blogEditor.fieldTitle') }}</label>
+                                    <input 
+                                        type="text" 
+                                        id="post-title" 
+                                        v-model="multiLanguageForm[activeLanguageTab].title"
+                                        class="form-control" 
+                                        :placeholder="t('blogEditor.titlePlaceholder')"
+                                    />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="post-excerpt">{{ t('blogEditor.fieldExcerpt') }}</label>
+                                    <textarea 
+                                        id="post-excerpt" 
+                                        v-model="multiLanguageForm[activeLanguageTab].excerpt"
+                                        class="form-control" 
+                                        rows="3"
+                                        :placeholder="t('blogEditor.excerptPlaceholder')"
+                                    ></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="post-content">{{ t('blogEditor.fieldContent') }}</label>
+                                    <textarea 
+                                        id="post-content" 
+                                        v-model="multiLanguageForm[activeLanguageTab].content"
+                                        class="form-control editor-textarea" 
+                                        rows="15"
+                                        :placeholder="t('blogEditor.contentPlaceholder')"
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </template>
+                        
+                        <!-- Общие поля для обоих типов форм -->
                         <div class="form-group">
-                            <label for="post-slug">Slug (URL)</label>
+                            <label for="post-slug">{{ t('blogEditor.slug') }}</label>
                             <input 
                                 type="text" 
                                 id="post-slug" 
@@ -65,29 +160,7 @@
                                 class="form-control" 
                                 placeholder="post-url-slug"
                             />
-                            <small class="form-help">Leave empty to auto-generate from title</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="post-excerpt">Excerpt (Summary)</label>
-                            <textarea 
-                                id="post-excerpt" 
-                                v-model="postForm.excerpt"
-                                class="form-control" 
-                                rows="3"
-                                placeholder="Brief description of your post..."
-                            ></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="post-content">Content</label>
-                            <textarea 
-                                id="post-content" 
-                                v-model="postForm.content"
-                                class="form-control editor-textarea" 
-                                rows="15"
-                                placeholder="Write your post content here..."
-                            ></textarea>
+                            <small class="form-help">{{ t('blogEditor.slugHelp') }}</small>
                         </div>
                         
                         <div class="form-group">
@@ -151,10 +224,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, reactive } from 'vue';
+import { ref, onMounted, computed, reactive, watch } from 'vue';
 import { AuthServiceType } from '../services/auth';
 import { BlogServiceType, CreatePostData, UpdatePostData } from '../services/blog';
+import { LocalizedContent } from '../services/blog/types';
 import { useBlog, BlogPost } from '../composables/useBlog';
+import { useI18n, Language } from '../composables/useI18n';
 import AuthGuard from '../components/auth/AuthGuard.vue';
 import UserProfile from '../components/auth/UserProfile.vue';
 import '../assets/styles/blogEditor.css';
@@ -174,19 +249,43 @@ const {
     fetchTags 
 } = useBlog(BlogServiceType.MOCK);
 
+// Получаем i18n сервис
+const { t, currentLanguage, setLanguage } = useI18n();
+
 // Локальное состояние для редактора
 const selectedPost = ref<BlogPost | null>(null);
 const isNewPost = ref(false);
-// For tag input
 const newTagInput = ref('');
+const activeLanguageTab = ref<Language>(Language.EN);
+const availableLanguages = [Language.EN, Language.RU];
 
+// Общая форма с общими полями
 const postForm = reactive({
-    title: '',
-    content: '',
+    language: undefined as Language | undefined, // язык статьи, undefined - многоязычная статья
     slug: '',
-    excerpt: '',
     published: false,
     tags: [] as string[]
+});
+
+// Форма для одноязычной статьи
+const singleLanguageForm = reactive({
+    title: '',
+    content: '',
+    excerpt: ''
+});
+
+// Форма для многоязычной статьи
+const multiLanguageForm = reactive({
+    [Language.EN]: {
+        title: '',
+        content: '',
+        excerpt: ''
+    },
+    [Language.RU]: {
+        title: '',
+        content: '',
+        excerpt: ''
+    }
 });
 
 // Загружаем статьи при монтировании компонента
@@ -195,27 +294,125 @@ onMounted(async () => {
     await fetchTags();  // Загружаем теги
 });
 
+// Получение локализованного заголовка
+const getLocalizedTitle = (post: any): string => {
+    if (typeof post.title === 'string') {
+        return post.title;
+    }
+    
+    // Если это объект локализации, пробуем получить значение для текущего языка
+    if (typeof post.title === 'object') {
+        const currentLang = currentLanguage.value;
+        
+        if (post.title[currentLang]) {
+            return post.title[currentLang];
+        }
+        
+        // Если нет перевода на текущем языке, возвращаем первый доступный
+        const availableLang = Object.keys(post.title).find(lang => 
+            post.title[lang as Language] !== undefined && 
+            post.title[lang as Language] !== ''
+        );
+        
+        if (availableLang) {
+            return post.title[availableLang as Language] || '';
+        }
+    }
+    
+    return t('blogEditor.untitled');
+};
+
+// Получение локализованного поля
+const getLocalizedField = (field: string | LocalizedContent | undefined): string => {
+    if (!field) return '';
+    
+    if (typeof field === 'string') {
+        return field;
+    }
+    
+    // Возвращаем значение для текущего языка или первое доступное значение
+    return field[currentLanguage.value] || 
+           field[Object.keys(field)[0] as Language] || 
+           '';
+};
+
 // Форматирование даты
 const formatDate = (date: Date | string) => {
-    return new Date(date).toLocaleDateString();
+    const locale = currentLanguage.value === Language.RU ? 'ru-RU' : 'en-US';
+    return new Date(date).toLocaleDateString(locale);
 };
 
 // Выбор статьи для редактирования
 const selectPost = async (post: BlogPost) => {
     isNewPost.value = false;
+    
     // Загружаем полную версию статьи (возможно, с дополнительными данными)
     const fullPost = await fetchPost(post.id);
     
     if (fullPost) {
         selectedPost.value = fullPost;
-        // Заполняем форму данными статьи
-        postForm.title = fullPost.title;
-        postForm.content = fullPost.content;
+        
+        // Заполняем общие поля формы
         postForm.slug = fullPost.slug || '';
-        postForm.excerpt = fullPost.excerpt || '';
         postForm.published = fullPost.published;
         postForm.tags = fullPost.tags || [];
+        postForm.language = fullPost.language;
+        
+        // Определяем тип контента (одноязычный или многоязычный)
+        if (fullPost.language) {
+            // Одноязычный контент
+            singleLanguageForm.title = typeof fullPost.title === 'string' 
+                ? fullPost.title 
+                : fullPost.title[fullPost.language] || '';
+                
+            singleLanguageForm.content = typeof fullPost.content === 'string' 
+                ? fullPost.content 
+                : fullPost.content[fullPost.language] || '';
+                
+            singleLanguageForm.excerpt = fullPost.excerpt 
+                ? (typeof fullPost.excerpt === 'string' 
+                    ? fullPost.excerpt 
+                    : fullPost.excerpt[fullPost.language] || '') 
+                : '';
+        } else {
+            // Многоязычный контент
+            resetMultiLanguageForm();
+            
+            // Заполняем формы для каждого языка
+            if (typeof fullPost.title === 'object') {
+                Object.keys(fullPost.title).forEach(lang => {
+                    if (lang in multiLanguageForm) {
+                        multiLanguageForm[lang as Language].title = fullPost.title[lang as Language] || '';
+                    }
+                });
+            }
+            
+            if (typeof fullPost.content === 'object') {
+                Object.keys(fullPost.content).forEach(lang => {
+                    if (lang in multiLanguageForm) {
+                        multiLanguageForm[lang as Language].content = fullPost.content[lang as Language] || '';
+                    }
+                });
+            }
+            
+            if (fullPost.excerpt && typeof fullPost.excerpt === 'object') {
+                Object.keys(fullPost.excerpt).forEach(lang => {
+                    if (lang in multiLanguageForm && fullPost.excerpt) {
+                        multiLanguageForm[lang as Language].excerpt = fullPost.excerpt[lang as Language] || '';
+                    }
+                });
+            }
+        }
     }
+};
+
+// Сброс многоязычной формы
+const resetMultiLanguageForm = () => {
+    Object.keys(multiLanguageForm).forEach(lang => {
+        multiLanguageForm[lang as Language].title = '';
+        multiLanguageForm[lang as Language].content = '';
+        multiLanguageForm[lang as Language].excerpt = '';
+    });
 };
 
 // Работа с тегами
@@ -244,47 +441,109 @@ const createNewPost = () => {
     isNewPost.value = true;
     selectedPost.value = null;
     
-    // Очищаем форму
-    postForm.title = '';
-    postForm.content = '';
+    // Очищаем общую форму
     postForm.slug = '';
-    postForm.excerpt = '';
     postForm.published = false;
     postForm.tags = [];
+    postForm.language = Language.EN;  // По умолчанию создаем статью на английском
+    
+    // Сбрасываем формы для каждого языка
+    singleLanguageForm.title = '';
+    singleLanguageForm.content = '';
+    singleLanguageForm.excerpt = '';
+    
+    // Сбрасываем многоязычную форму
+    resetMultiLanguageForm();
+};
+
+// Проверка наличия обязательных полей
+const validateForm = () => {
+    if (postForm.language) {
+        // Одноязычная статья
+        if (!singleLanguageForm.title.trim() || !singleLanguageForm.content.trim()) {
+            alert(t('error.required'));
+            return false;
+        }
+    } else {
+        // Многоязычная статья - нужен хотя бы один язык с заполненными полями
+        let hasValidContent = false;
+        
+        for (const lang of Object.keys(multiLanguageForm)) {
+            if (multiLanguageForm[lang as Language].title.trim() && 
+                multiLanguageForm[lang as Language].content.trim()) {
+                hasValidContent = true;
+                break;
+            }
+        }
+        
+        if (!hasValidContent) {
+            alert(t('blogEditor.error.noLanguage'));
+            return false;
+        }
+    }
+    
+    return true;
+};
+
+// Получение данных для создания/обновления статьи
+const getPostData = () => {
+    if (postForm.language) {
+        // Одноязычная статья
+        return {
+            title: singleLanguageForm.title,
+            content: singleLanguageForm.content,
+            excerpt: singleLanguageForm.excerpt.trim() || undefined,
+            slug: postForm.slug.trim() || undefined,
+            published: postForm.published,
+            tags: postForm.tags,
+            language: postForm.language
+        };
+    } else {
+        // Многоязычная статья
+        const title: LocalizedContent = {};
+        const content: LocalizedContent = {};
+        const excerpt: LocalizedContent = {};
+        
+        // Собираем только заполненные поля
+        for (const lang of Object.keys(multiLanguageForm)) {
+            const langKey = lang as Language;
+            if (multiLanguageForm[langKey].title.trim()) {
+                title[langKey] = multiLanguageForm[langKey].title;
+            }
+            if (multiLanguageForm[langKey].content.trim()) {
+                content[langKey] = multiLanguageForm[langKey].content;
+            }
+            if (multiLanguageForm[langKey].excerpt.trim()) {
+                excerpt[langKey] = multiLanguageForm[langKey].excerpt;
+            }
+        }
+        
+        return {
+            title,
+            content,
+            excerpt: Object.keys(excerpt).length > 0 ? excerpt : undefined,
+            slug: postForm.slug.trim() || undefined,
+            published: postForm.published,
+            tags: postForm.tags
+        };
+    }
 };
 
 // Сохранение статьи
 const savePost = async () => {
-    if (!postForm.title.trim() || !postForm.content.trim()) {
-        alert('Заголовок и содержимое статьи обязательны');
+    if (!validateForm()) {
         return;
     }
     
     try {
+        const postData = getPostData();
+        
         if (isNewPost.value) {
             // Создаем новую статью
-            const newPostData: CreatePostData = {
-                title: postForm.title,
-                content: postForm.content,
-                slug: postForm.slug.trim() || undefined,
-                excerpt: postForm.excerpt.trim() || undefined,
-                published: postForm.published,
-                tags: postForm.tags
-            };
-            
-            await createPost(newPostData);
+            await createPost(postData as CreatePostData);
         } else if (selectedPost.value) {
             // Обновляем существующую статью
-            const updatePostData: UpdatePostData = {
-                title: postForm.title,
-                content: postForm.content,
-                slug: postForm.slug.trim() || undefined,
-                excerpt: postForm.excerpt.trim() || undefined,
-                published: postForm.published,
-                tags: postForm.tags
-            };
-            
-            await updatePost(selectedPost.value.id, updatePostData);
+            await updatePost(selectedPost.value.id, postData as UpdatePostData);
         }
         
         // Сбрасываем состояние редактора
@@ -295,7 +554,7 @@ const savePost = async () => {
         await fetchPosts({ limit: 50 });
     } catch (e) {
         console.error('Ошибка при сохранении статьи:', e);
-        alert('Не удалось сохранить статью');
+        alert(t('blogEditor.error.save'));
     }
 };
 
@@ -304,13 +563,21 @@ const cancelEdit = () => {
     selectedPost.value = null;
     isNewPost.value = false;
     
-    // Очищаем форму
-    postForm.title = '';
-    postForm.content = '';
+    // Очищаем общую форму
     postForm.slug = '';
-    postForm.excerpt = '';
     postForm.published = false;
     postForm.tags = [];
+    postForm.language = undefined;
+    
+    // Очищаем одноязычную форму
+    singleLanguageForm.title = '';
+    singleLanguageForm.content = '';
+    singleLanguageForm.excerpt = '';
+    
+    // Очищаем многоязычную форму
+    resetMultiLanguageForm();
+    
+    // Очищаем поле тега
     newTagInput.value = '';
 };
 
