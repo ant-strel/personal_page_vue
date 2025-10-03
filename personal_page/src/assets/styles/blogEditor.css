@@ -79,6 +79,16 @@
   overflow-y: auto;
 }
 
+.draft-badge {
+  display: inline-block;
+  background-color: #f5f5f5;
+  color: #666;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 3px;
+  margin-left: 0.5rem;
+}
+
 .post-editor h2 {
   margin-bottom: 1.5rem;
 }
@@ -102,6 +112,97 @@
   display: flex;
   gap: 0.75rem;
   margin-top: 1.5rem;
+}
+
+.form-help {
+  display: block;
+  margin-top: 0.25rem;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+/* Tags management */
+.tags-container {
+  margin-top: 0.5rem;
+}
+
+.tags-input-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.btn-small {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  color: #333;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: #666;
+  margin-left: 0.25rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 0.5;
+  padding: 0 0.25rem;
+}
+
+.remove-tag:hover {
+  color: #e74c3c;
+}
+
+.available-tags {
+  margin-top: 1rem;
+}
+
+.available-tags p {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.available-tag {
+  display: inline-block;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.available-tag:hover {
+  background-color: #e9e9e9;
+}
+
+.available-tag.selected {
+  background-color: #e0e0e0;
+  color: #333;
 }
 
 /* Button variants - use common styles from base.css */
