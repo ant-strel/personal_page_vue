@@ -40,8 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuth } from '../composables/useAuth';
+import { AuthServiceType } from '../services/auth';
 import '../assets/styles/admin.css';
 
 const router = useRouter();
@@ -49,18 +51,35 @@ const credentials = ref({
     username: '',
     password: ''
 });
+
+// Используем наш композабл авторизации
+// В дальнейшем можно легко изменить тип сервиса с MOCK на API
+const { isAuthenticated, isLoading, error, login, user } = useAuth(AuthServiceType.MOCK);
+
+// Отслеживаем сообщение об ошибке из сервиса авторизации
 const errorMessage = ref('');
 
-const handleLogin = () => {
-    // This is a simple example - in a real app, you would call an API
-    if (credentials.value.username === 'admin' && credentials.value.password === 'password') {
-        // Store authentication state (in a real app, use a token)
-        localStorage.setItem('isLoggedIn', 'true');
-        // Redirect to blog editor
+// Если пользователь уже авторизован, перенаправляем его на страницу редактора блога
+onMounted(() => {
+    if (isAuthenticated.value) {
         router.push('/admin/blog-editor');
-        errorMessage.value = '';
+    }
+});
+
+// Обработчик входа в систему
+const handleLogin = async () => {
+    // Сбрасываем предыдущие ошибки
+    errorMessage.value = '';
+    
+    // Пытаемся выполнить вход
+    const success = await login(credentials.value);
+    
+    if (success) {
+        // Перенаправляем на страницу редактора блога
+        router.push('/admin/blog-editor');
     } else {
-        errorMessage.value = 'Invalid username or password';
+        // Отображаем ошибку
+        errorMessage.value = error.value || 'Неправильное имя пользователя или пароль';
     }
 };
 </script>

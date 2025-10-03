@@ -1,72 +1,76 @@
 <template>
-    <div class="blog-editor">
-        <header class="editor-header">
-            <h1>Blog Editor</h1>
-            <button @click="logout" class="btn btn-logout">Logout</button>
-        </header>
+    <AuthGuard>
+        <div class="blog-editor">
+            <header class="editor-header">
+                <h1>Blog Editor</h1>
+                <UserProfile />
+            </header>
 
-        <div class="editor-container">
-            <div class="posts-list">
-                <h2>Posts</h2>
-                <button @click="createNewPost" class="btn btn-create">Create New Post</button>
-                
-                <div class="posts-container">
-                    <div 
-                        v-for="post in posts" 
-                        :key="post.id" 
-                        @click="selectPost(post)"
-                        class="post-item"
-                        :class="{ 'selected': selectedPost?.id === post.id }"
-                    >
-                        <h3>{{ post.title }}</h3>
-                        <p class="post-date">{{ formatDate(post.date) }}</p>
-                        <div class="post-actions">
-                            <button @click.stop="deletePost(post.id)" class="btn-delete">Delete</button>
+            <div class="editor-container">
+                <div class="posts-list">
+                    <h2>Posts</h2>
+                    <button @click="createNewPost" class="btn btn-create">Create New Post</button>
+                    
+                    <div class="posts-container">
+                        <div 
+                            v-for="post in posts" 
+                            :key="post.id" 
+                            @click="selectPost(post)"
+                            class="post-item"
+                            :class="{ 'selected': selectedPost?.id === post.id }"
+                        >
+                            <h3>{{ post.title }}</h3>
+                            <p class="post-date">{{ formatDate(post.date) }}</p>
+                            <div class="post-actions">
+                                <button @click.stop="deletePost(post.id)" class="btn-delete">Delete</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="post-editor">
-                <template v-if="selectedPost">
-                    <h2>{{ isNewPost ? 'Create New Post' : 'Edit Post' }}</h2>
-                    
-                    <div class="form-group">
-                        <label for="post-title">Title</label>
-                        <input 
-                            type="text" 
-                            id="post-title" 
-                            v-model="selectedPost.title"
-                            class="form-control" 
-                        />
+                <div class="post-editor">
+                    <template v-if="selectedPost">
+                        <h2>{{ isNewPost ? 'Create New Post' : 'Edit Post' }}</h2>
+                        
+                        <div class="form-group">
+                            <label for="post-title">Title</label>
+                            <input 
+                                type="text" 
+                                id="post-title" 
+                                v-model="selectedPost.title"
+                                class="form-control" 
+                            />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="post-content">Content</label>
+                            <textarea 
+                                id="post-content" 
+                                v-model="selectedPost.content"
+                                class="form-control editor-textarea" 
+                                rows="15"
+                            ></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button @click="savePost" class="btn btn-save">Save</button>
+                            <button @click="cancelEdit" class="btn btn-cancel">Cancel</button>
+                        </div>
+                    </template>
+                    <div v-else class="no-post-selected">
+                        <p>Select a post to edit or create a new one</p>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="post-content">Content</label>
-                        <textarea 
-                            id="post-content" 
-                            v-model="selectedPost.content"
-                            class="form-control editor-textarea" 
-                            rows="15"
-                        ></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button @click="savePost" class="btn btn-save">Save</button>
-                        <button @click="cancelEdit" class="btn btn-cancel">Cancel</button>
-                    </div>
-                </template>
-                <div v-else class="no-post-selected">
-                    <p>Select a post to edit or create a new one</p>
                 </div>
             </div>
         </div>
-    </div>
+    </AuthGuard>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { AuthServiceType } from '../services/auth';
+import AuthGuard from '../components/auth/AuthGuard.vue';
+import UserProfile from '../components/auth/UserProfile.vue';
 import '../assets/styles/blogEditor.css';
 
 interface Post {
@@ -76,7 +80,6 @@ interface Post {
     date: Date;
 }
 
-const router = useRouter();
 const posts = ref<Post[]>([]);
 const selectedPost = ref<Post | null>(null);
 const isNewPost = ref(false);
@@ -146,10 +149,5 @@ const deletePost = (id: number) => {
         // Save to localStorage
         localStorage.setItem('blog-posts', JSON.stringify(posts.value));
     }
-};
-
-const logout = () => {
-    localStorage.removeItem('isLoggedIn');
-    router.push('/admin');
 };
 </script>
