@@ -90,13 +90,13 @@
                             
                             <div class="form-group">
                                 <label for="post-content">{{ t('blogEditor.fieldContent') }}</label>
-                                <textarea 
-                                    id="post-content" 
+                                <RichEditor
+                                    id="post-content"
                                     v-model="singleLanguageForm.content"
-                                    class="form-control editor-textarea" 
-                                    rows="15"
                                     :placeholder="t('blogEditor.contentPlaceholder')"
-                                ></textarea>
+                                    :rows="15"
+                                    @media-inserted="handleMediaInserted"
+                                />
                             </div>
                         </template>
                         
@@ -139,13 +139,13 @@
                                 
                                 <div class="form-group">
                                     <label for="post-content">{{ t('blogEditor.fieldContent') }}</label>
-                                    <textarea 
-                                        id="post-content" 
+                                    <RichEditor
+                                        id="post-content"
                                         v-model="multiLanguageForm[activeLanguageTab].content"
-                                        class="form-control editor-textarea" 
-                                        rows="15"
                                         :placeholder="t('blogEditor.contentPlaceholder')"
-                                    ></textarea>
+                                        :rows="15"
+                                        @media-inserted="handleMediaInserted"
+                                    />
                                 </div>
                             </div>
                         </template>
@@ -231,6 +231,9 @@ import { useBlog, BlogPost } from '../composables/useBlog';
 import { useI18n, Language } from '../composables/useI18n';
 import AuthGuard from '../components/auth/AuthGuard.vue';
 import UserProfile from '../components/auth/UserProfile.vue';
+import RichEditor from '../components/editor/RichEditor.vue';
+import { MediaItem } from '../services/media';
+import 'highlight.js/styles/github.css';
 import '../assets/styles/blogEditor.css';
 
 // Используем сервис блога через композабл
@@ -593,5 +596,12 @@ const deletePost = async (id: string) => {
             alert('Не удалось удалить статью');
         }
     }
+};
+
+// Обработка вставки медиа
+const handleMediaInserted = (media: MediaItem) => {
+    console.log('Media inserted:', media);
+    // В реальном приложении здесь может быть логика для отслеживания 
+    // используемых медиафайлов или обработка дополнительных действий
 };
 </script>

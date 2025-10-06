@@ -19,6 +19,56 @@ export interface Translations {
 
 // Все переводы приложения
 const translations: Translations = {
+  // Media Library
+  'mediaLibrary.title': {
+    [Language.RU]: 'Медиа библиотека',
+    [Language.EN]: 'Media Library'
+  },
+  'mediaLibrary.uploadButton': {
+    [Language.RU]: 'Загрузить',
+    [Language.EN]: 'Upload'
+  },
+  'mediaLibrary.filterAll': {
+    [Language.RU]: 'Все файлы',
+    [Language.EN]: 'All Files'
+  },
+  'mediaLibrary.filterImages': {
+    [Language.RU]: 'Изображения',
+    [Language.EN]: 'Images'
+  },
+  'mediaLibrary.filterVideos': {
+    [Language.RU]: 'Видео',
+    [Language.EN]: 'Videos'
+  },
+  'mediaLibrary.filterDocuments': {
+    [Language.RU]: 'Документы',
+    [Language.EN]: 'Documents'
+  },
+  'mediaLibrary.uploading': {
+    [Language.RU]: 'Загрузка',
+    [Language.EN]: 'Uploading'
+  },
+  'mediaLibrary.loading': {
+    [Language.RU]: 'Загрузка файлов...',
+    [Language.EN]: 'Loading files...'
+  },
+  'mediaLibrary.noMedia': {
+    [Language.RU]: 'Нет медиа файлов',
+    [Language.EN]: 'No media files'
+  },
+  'mediaLibrary.insert': {
+    [Language.RU]: 'Вставить',
+    [Language.EN]: 'Insert'
+  },
+  'mediaLibrary.delete': {
+    [Language.RU]: 'Удалить',
+    [Language.EN]: 'Delete'
+  },
+  'mediaLibrary.cancel': {
+    [Language.RU]: 'Отмена',
+    [Language.EN]: 'Cancel'
+  },
+
   // Общие элементы интерфейса
   'app.home': {
     [Language.RU]: 'Главная',

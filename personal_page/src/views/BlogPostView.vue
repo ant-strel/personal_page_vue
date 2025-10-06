@@ -38,7 +38,7 @@
       </header>
       
       <div class="post-content">
-        <div v-html="renderMarkdown(getLocalizedField(post.content))"></div>
+        <MarkdownContent :content="getLocalizedField(post.content)" />
       </div>
       
       <footer class="post-footer">
@@ -55,30 +55,21 @@ import { useBlog } from '../composables/useBlog';
 import { useI18n, Language } from '../composables/useI18n';
 import { BlogServiceType } from '../services/blog';
 import { LocalizedContent } from '../services/blog/types';
+import MarkdownContent from '../components/blog/MarkdownContent.vue';
+import 'highlight.js/styles/github.css';
 
 // Использование i18n
 const { t, currentLanguage, setLanguage } = useI18n();
 const selectedLanguage = ref(currentLanguage.value);
 
-// Markdown renderer (for simplicity, we'll use a basic implementation)
-// In a real app, you might want to use a library like 'marked' or 'markdown-it'
-function renderMarkdown(content: string): string {
-  if (!content) return '';
-  
-  // For now, we'll just wrap paragraphs in <p> tags
-  // In a real application, you would use a proper markdown parser
-  return content
-    .split('\n\n')
-    .map(paragraph => `<p>${paragraph}</p>`)
-    .join('');
-}
+// We are now using the MarkdownContent component instead of this function
 
 // Get route params
 const route = useRoute();
 const slug = route.params.slug as string;
 
 // Use blog service
-const { currentPost, isLoading, error, fetchPost } = useBlog(BlogServiceType.MOCK);
+const { currentPost, isLoading, error, fetchPost } = useBlog();
 
 // For easier template access
 const post = computed(() => currentPost.value);
