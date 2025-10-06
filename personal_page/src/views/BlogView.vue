@@ -5,14 +5,6 @@
             <p class="subtitle">{{ t('blog.subtitle') }}</p>
         </section>
         
-        <div class="language-selector">
-            <label for="language-select">{{ t('language') }}:</label>
-            <select id="language-select" v-model="selectedLanguage" @change="changeLanguage">
-                <option :value="Language.EN">{{ t('language.en') }}</option>
-                <option :value="Language.RU">{{ t('language.ru') }}</option>
-            </select>
-        </div>
-        
         <div v-if="isLoading" class="loading-posts">
             <p>{{ t('blog.loading') }}</p>
         </div>
@@ -77,7 +69,6 @@ const { t, currentLanguage, setLanguage } = useI18n();
 
 // Локальное состояние
 const currentPage = ref(1);
-const selectedLanguage = ref<Language>(currentLanguage.value);
 
 // Загрузка постов при монтировании компонента
 onMounted(async () => {
@@ -98,11 +89,6 @@ const loadPosts = async (page: number) => {
         published: true, // Показываем только опубликованные посты
         language: currentLanguage.value // Фильтруем по текущему языку
     });
-};
-
-// Смена языка
-const changeLanguage = () => {
-    setLanguage(selectedLanguage.value);
 };
 
 // Навигация по страницам

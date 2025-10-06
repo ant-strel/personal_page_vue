@@ -36,6 +36,14 @@ const translations: Translations = {
     [Language.RU]: 'Администрирование',
     [Language.EN]: 'Admin'
   },
+  'app.siteName': {
+    [Language.RU]: 'Ваше Имя',
+    [Language.EN]: 'Your Name'
+  },
+  'app.copyright': {
+    [Language.RU]: '© 2025 Ваше Имя. Все права защищены.',
+    [Language.EN]: '© 2025 Your Name. All rights reserved.'
+  },
   
   // Блог
   'blog.title': {
@@ -251,6 +259,60 @@ const translations: Translations = {
   'contact.title': {
     [Language.RU]: 'Свяжитесь со мной',
     [Language.EN]: 'Contact Me'
+  },
+  'contact.subtitle': {
+    [Language.RU]: 'Для сотрудничества или вопросов',
+    [Language.EN]: 'Get in touch for collaboration or inquiries'
+  },
+  'contact.otherWays': {
+    [Language.RU]: 'Другие способы связи',
+    [Language.EN]: 'Other Ways to Connect'
+  },
+  'contact.form.name': {
+    [Language.RU]: 'Имя',
+    [Language.EN]: 'Name'
+  },
+  'contact.form.email': {
+    [Language.RU]: 'Email',
+    [Language.EN]: 'Email'
+  },
+  'contact.form.message': {
+    [Language.RU]: 'Сообщение',
+    [Language.EN]: 'Message'
+  },
+  'contact.form.submit': {
+    [Language.RU]: 'Отправить сообщение',
+    [Language.EN]: 'Send Message'
+  },
+  'contact.form.namePlaceholder': {
+    [Language.RU]: 'Ваше имя',
+    [Language.EN]: 'Your name'
+  },
+  'contact.form.emailPlaceholder': {
+    [Language.RU]: 'Ваш email адрес',
+    [Language.EN]: 'Your email address'
+  },
+  'contact.form.messagePlaceholder': {
+    [Language.RU]: 'Ваше сообщение',
+    [Language.EN]: 'Your message'
+  },
+  
+  // Home page
+  'home.title': {
+    [Language.RU]: 'Добро пожаловать на мою страницу',
+    [Language.EN]: 'Welcome to My Personal Page'
+  },
+  'home.subtitle': {
+    [Language.RU]: 'Минималистичный Vue.js портфолио и блог',
+    [Language.EN]: 'A minimalistic Vue.js portfolio and blog'
+  },
+  'home.latestPosts': {
+    [Language.RU]: 'Последние статьи блога',
+    [Language.EN]: 'Latest Blog Posts'
+  },
+  'home.comingSoon': {
+    [Language.RU]: 'Статьи блога скоро появятся',
+    [Language.EN]: 'Blog posts will be added soon'
   },
   
   // Админ
