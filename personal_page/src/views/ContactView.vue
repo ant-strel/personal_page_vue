@@ -6,6 +6,26 @@
         </section>
         
         <div class="contact-form">
+            
+            <div class="contact-info">
+                <h3>Other Ways to Connect</h3>
+                
+                <div class="contact-method">
+                    <span class="contact-method-label">Email:</span>
+                    <span>your.email@example.com</span>
+                </div>
+                
+                <div class="contact-method">
+                    <span class="contact-method-label">LinkedIn:</span>
+                    <a href="https://linkedin.com/in/yourprofile" target="_blank">linkedin.com/in/yourprofile</a>
+                </div>
+                
+                <div class="contact-method">
+                    <span class="contact-method-label">GitHub:</span>
+                    <a href="https://github.com/yourusername" target="_blank">github.com/yourusername</a>
+                </div>
+            </div>
+
             <form>
                 <div class="form-group">
                     <label for="name">Name</label>
@@ -27,24 +47,7 @@
                 </div>
             </form>
             
-            <div class="contact-info">
-                <h3>Other Ways to Connect</h3>
-                
-                <div class="contact-method">
-                    <span class="contact-method-label">Email:</span>
-                    <span>your.email@example.com</span>
-                </div>
-                
-                <div class="contact-method">
-                    <span class="contact-method-label">LinkedIn:</span>
-                    <a href="https://linkedin.com/in/yourprofile" target="_blank">linkedin.com/in/yourprofile</a>
-                </div>
-                
-                <div class="contact-method">
-                    <span class="contact-method-label">GitHub:</span>
-                    <a href="https://github.com/yourusername" target="_blank">github.com/yourusername</a>
-                </div>
-            </div>
+            
         </div>
     </div>
 </template>

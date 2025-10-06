@@ -225,8 +225,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, reactive, watch } from 'vue';
-import { AuthServiceType } from '../services/auth';
-import { BlogServiceType, CreatePostData, UpdatePostData } from '../services/blog';
+import { CreatePostData, UpdatePostData } from '../services/blog';
 import { LocalizedContent } from '../services/blog/types';
 import { useBlog, BlogPost } from '../composables/useBlog';
 import { useI18n, Language } from '../composables/useI18n';
@@ -247,7 +246,7 @@ const {
     updatePost, 
     deletePost: removeBlogPost,
     fetchTags 
-} = useBlog(BlogServiceType.MOCK);
+} = useBlog();
 
 // Получаем i18n сервис
 const { t, currentLanguage, setLanguage } = useI18n();

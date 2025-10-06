@@ -72,7 +72,7 @@ import { BlogServiceType } from '../services/blog';
 import { LocalizedContent } from '../services/blog/types';
 
 // Использование сервисов
-const { posts, pagination, isLoading, fetchPosts } = useBlog(BlogServiceType.MOCK);
+const { posts, pagination, isLoading, fetchPosts } = useBlog();
 const { t, currentLanguage, setLanguage } = useI18n();
 
 // Локальное состояние

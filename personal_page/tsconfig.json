@@ -19,7 +19,7 @@
     "allowJs": true,
     "sourceMap": true,
     "noImplicitAny": false,
-    "types": ["vite/client"]
+    "types": ["vite/client", "pinia"]
   },
   "references": [
     {
